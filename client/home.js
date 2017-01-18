@@ -24,8 +24,12 @@ class Home extends React.Component {
 
 	removeItem(item) {
 		var i = this.state.items.indexOf(item);
+		console.log(this.state.items);
 		if(i !== -1) {
-			this.state.items.splice(i, 1);
+			console.log("in removeItem", this.state.items);
+			//this.state.items.splice(i, 1);
+			fetch("/todos/:todo_id", { method: "DELETE", body:"name=" + encodeURIComponent(item), headers:{"content-type": 'application/x-www-form-urlencoded; charset=utf-8'}})
+			.then(response => console.log(response))
 		}
 		return this.setState({ items: this.state.items })
 	}

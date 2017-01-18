@@ -38,10 +38,27 @@ app.get('/todos', (req, res) => {
   })
 })
 
+app.del('/todos/:todo_id', (req, res, next) => {
+  console.log("delete from express");
+  console.log("REQ dot BODY", req.body);
+  console.log("REQ PARAMS**", req.params);
+    Todo.findByIdAndRemove(req.params.todo_id, function(error, todo) {
+    // if (error) return next(error);
+    // if (count !==1) return next(new Error('Something went wrong.'));
+    // console.info('Deleted task %s with id=%s completed.', req.body.name, req.task._id);
+    // res.send(200);
+    console.log("todo is", todo);
+    var response = {
+      message: "Todo successfully deleted",
+      id: todo.todo_id
+    };
+    res.send(response);
+  });
+
+})
+
 
 app.post('/create-todo', (req, res) => {
-  console.log('create-todo called')
-  console.log(req.body)
   let todo = new Todo()
   todo.name = req.body.name
   todo.createdAt = Date.now()
@@ -49,12 +66,9 @@ app.post('/create-todo', (req, res) => {
   todo.save(err => {
     if (err) {console.error(err); return res.sendStatus(500);}
 
-      res.json({msg: 'Todo added successfully to the database'})
+      res.json(todo)
   })
 })
-
-
-
 
 
 
