@@ -1,11 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Home from './Home';
-import store from './store';
-import {Provider} from 'react-redux';
+import Home from './home';
 
 document.addEventListener('DOMContentLoaded', () =>
-	ReactDOM.render(<Provider store={store}>
-		<Home />
-	</Provider>, document.getElementById('app'))
+  ReactDOM.render(
+    <Home />,
+ document.getElementById('app'))
 );
