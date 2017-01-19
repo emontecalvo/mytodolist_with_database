@@ -13,25 +13,69 @@ class Home extends React.Component {
 			showEdit: false,
 			wordToEdit: '',
 		}
+
+		this.addItem = this.addItem.bind(this)
 	}
 
 	addItem(item) {
-		this.state.items.push(item);
-		fetch("/create-todo", { method: "POST", body:"name=" + encodeURIComponent(item), headers:{"content-type": 'application/x-www-form-urlencoded; charset=utf-8'}})
-		return this.setState({ items: this.state.items })
-
+		//fetch("/create-todo", { method: "POST", body:"name=" + encodeURIComponent(item), headers:{"content-type": 'application/x-www-form-urlencoded; charset=utf-8'}})
+		
+		fetch('/create-todo', {
+		  method: 'POST',
+		  headers: {
+		    'Content-Type': 'application/json'
+		  },
+		  body: JSON.stringify({
+		    name: item
+		  })
+		}).then((response) => {
+		    return response.json()
+		  }).then((data) => {
+		   	this.setState({ items: data })
+		  })
 	}
 
-	removeItem(item) {
-		var i = this.state.items.indexOf(item);
-		console.log(this.state.items);
+	componentDidMount() {
+		fetch('/todos')
+		  .then((response) =>{
+		    return response.json()
+		  }).then((data) =>{
+		    this.setState({ items: data })
+		  })
+	}
+
+	removeItem(item_id) {
+		var i;
+		for (var j = 0; j < this.state.items.length; j++) {
+			if (this.state.items[j]._id === item_id) {
+				var i = this.state.items[j];
+			}
+		}
+		console.log("the ITEM is", item_id);
+		console.log("IN REMOVE ITEM", this.state.items);
 		if(i !== -1) {
 			console.log("in removeItem", this.state.items);
 			//this.state.items.splice(i, 1);
-			fetch("/todos/:todo_id", { method: "DELETE", body:"name=" + encodeURIComponent(item), headers:{"content-type": 'application/x-www-form-urlencoded; charset=utf-8'}})
-			.then(response => console.log(response))
-		}
-		return this.setState({ items: this.state.items })
+			// fetch("/todos/:todo_id", { method: "DELETE", body:"name=" + encodeURIComponent(item_id), headers:{"content-type": 'application/x-www-form-urlencoded; charset=utf-8'}})
+			// .then(response => console.log(response))
+
+		fetch('/todos/' + item_id, {
+		  method: 'DELETE',
+		  headers: {
+		    'Content-Type': 'application/json'
+		  },
+		  body: JSON.stringify({
+		    id: item_id
+		  })
+		}).then((response) => {
+		    return response.json()
+		  }).then((data) => {
+		   	this.setState({ items: data })
+		  })
+	}
+
+
+		// return this.setState({ items: this.state.items })
 	}
 
 	editItemStart(item) {
@@ -60,7 +104,7 @@ class Home extends React.Component {
 		} else {
 			return <div>
 				<h1>my to-do list</h1>
-				<AddItemForm addItem={this.addItem.bind(this)}/>
+				<AddItemForm addItem={this.addItem}/>
 				<ListItems
 					removeItem={this.removeItem.bind(this)}
 					editItemStart={this.editItemStart.bind(this)}

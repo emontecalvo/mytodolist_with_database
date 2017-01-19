@@ -38,10 +38,10 @@ app.get('/todos', (req, res) => {
   })
 })
 
-app.del('/todos/:todo_id', (req, res, next) => {
+app.delete('/todos/:todo_id', (req, res, next) => {
   console.log("delete from express");
   console.log("REQ dot BODY", req.body);
-  console.log("REQ PARAMS**", req.params);
+  console.log("* * * * * req PARAMS:",  req.params);
     Todo.findByIdAndRemove(req.params.todo_id, function(error, todo) {
     // if (error) return next(error);
     // if (count !==1) return next(new Error('Something went wrong.'));
@@ -52,8 +52,16 @@ app.del('/todos/:todo_id', (req, res, next) => {
       message: "Todo successfully deleted",
       id: todo.todo_id
     };
-    res.send(response);
+    // res.send(response);
+    Todo.find({}, (err, todos) => {
+      if (err) {console.error(err); return res.sendStatus(500);}
+
+      res.json(todos)
+    })
   });
+   // Todo.find({name: req.body.name}, function(err, data){
+   //     console.log(data);
+   //     Todo.remove
 
 })
 
@@ -66,7 +74,13 @@ app.post('/create-todo', (req, res) => {
   todo.save(err => {
     if (err) {console.error(err); return res.sendStatus(500);}
 
-      res.json(todo)
+      Todo.find(function(err, todos) {
+        if(err) {
+          res.send(err)
+        } else {
+          res.send(todos)
+        }
+      })
   })
 })
 
