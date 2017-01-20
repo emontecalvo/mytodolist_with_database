@@ -2,7 +2,6 @@ import React from 'react';
 import {connect} from 'react-redux';
 
 
-//var ListItems = React.createClass({})
 const ListItems = ({ items, removeItem, editItemStart }) => {
   return (
     <ul>

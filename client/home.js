@@ -98,13 +98,13 @@ class Home extends React.Component {
 		this.state.wordToEdit = '',
 		this.state.objectToEdit = '',
 		this.state.showEdit = false;
-		fetch('/edittodos/' + item_obj, {
+		fetch('/edittodos/' + item_obj, { // this is sending req.params
 		  		method: 'PUT',
 		  		headers: {
 		    	'Content-Type': 'application/json'
 		  	},
-		  	body: JSON.stringify({
-		    id: item_obj._id
+		  	body: JSON.stringify({  /// this is the req.body, this is being passed to the server
+		    item: item_obj
 		  })
 		}).then((response) => {
 		    return response.json()
@@ -123,10 +123,7 @@ class Home extends React.Component {
 		   	this.setState({ items: item_sub });
 
 		  })
-		//return this.setState({ items: this.state.items, wordToEdit: this.state.wordToEdit, objectToEdit: this.state.objectToEdit, showEdit: this.state.showEdit});
 	}
-
-
 
 	render() {
 		if(this.state.showEdit) {

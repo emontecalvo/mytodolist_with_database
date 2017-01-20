@@ -1,5 +1,3 @@
-//NOTE: ES6 'import' statements cannot be used in the server - just use ES5
-//syntax instead ('require'). Other ES6 features should all be available.
 const express = require('express');
 
 const HOST = process.env.HOST;
@@ -26,10 +24,6 @@ app.get("/hello", (req, res) => {
 	res.json({message: "Hello, world!"});
 });
 
-
-
-
-
 app.get('/todos', (req, res) => {
   Todo.find({}, (err, todos) => {
     if (err) {console.error(err); return res.sendStatus(500);}
@@ -52,7 +46,6 @@ app.delete('/todos/:todo_id', (req, res, next) => {
   });
 })
 
-
 app.post('/create-todo', (req, res) => {
   let todo = new Todo()
   todo.name = req.body.name
@@ -72,13 +65,14 @@ app.post('/create-todo', (req, res) => {
 })
 
 app.put('/edittodos/:todo', function (req, res) {
-  console.log("~~~~~~~~~~~in app.put / edit")
   console.log("req body", req.body);
-  Todo.findById(req.params.todo_id, function (err, todo) {  
+  console.log("~~~~~~ req params", req.params);
+  Todo.findById(req.body.item._id, function (err, todo) {
+ 
     if (err) {
         res.status(500).send(err);
     } else {
-        todo.name = req.body.name || todo.name;
+        todo.name = req.body.item.name || todo.name;
         console.log("todo name is", todo.name);
         todo.save(function (err, todo) {
             if (err) {
@@ -90,9 +84,6 @@ app.put('/edittodos/:todo', function (req, res) {
     }
   });
 })
-
-
-
 
 function run_server() {
 	app.listen(PORT, HOST, err => {
