@@ -39,30 +39,17 @@ app.get('/todos', (req, res) => {
 })
 
 app.delete('/todos/:todo_id', (req, res, next) => {
-  console.log("delete from express");
-  console.log("REQ dot BODY", req.body);
-  console.log("* * * * * req PARAMS:",  req.params);
     Todo.findByIdAndRemove(req.params.todo_id, function(error, todo) {
-    // if (error) return next(error);
-    // if (count !==1) return next(new Error('Something went wrong.'));
-    // console.info('Deleted task %s with id=%s completed.', req.body.name, req.task._id);
-    // res.send(200);
-    console.log("todo is", todo);
     var response = {
       message: "Todo successfully deleted",
       id: todo.todo_id
     };
-    // res.send(response);
     Todo.find({}, (err, todos) => {
       if (err) {console.error(err); return res.sendStatus(500);}
 
       res.json(todos)
     })
   });
-   // Todo.find({name: req.body.name}, function(err, data){
-   //     console.log(data);
-   //     Todo.remove
-
 })
 
 
@@ -82,6 +69,26 @@ app.post('/create-todo', (req, res) => {
         }
       })
   })
+})
+
+app.put('/edittodos/:todo', function (req, res) {
+  console.log("~~~~~~~~~~~in app.put / edit")
+  console.log("req body", req.body);
+  Todo.findById(req.params.todo_id, function (err, todo) {  
+    if (err) {
+        res.status(500).send(err);
+    } else {
+        todo.name = req.body.name || todo.name;
+        console.log("todo name is", todo.name);
+        todo.save(function (err, todo) {
+            if (err) {
+                res.status(500).send(err)
+            }
+            console.log("********todo is", todo)
+            res.send(todo);
+        });
+    }
+  });
 })
 
 

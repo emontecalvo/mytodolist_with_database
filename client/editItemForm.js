@@ -2,7 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 
 
-const editItemForm = ({wordToEdit, editItem}) => {
+const editItemForm = ({objectToEdit, editItem}) => {
 
     return(
        <div>
@@ -10,12 +10,13 @@ const editItemForm = ({wordToEdit, editItem}) => {
       onSubmit={(e) => {
         e.preventDefault()
         let userInput = e.target.userInput.value
-        editItem(userInput)
+        objectToEdit.name = userInput
+        editItem(objectToEdit)
         e.target.userInput.value = ''
       }}
     >
 
-      <input type="text" defaultValue={wordToEdit} name="userInput" />
+      <input type="text" defaultValue={objectToEdit.name} name="userInput" />
 
     <button type="submit">
       Save Edit

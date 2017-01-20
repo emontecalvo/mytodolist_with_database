@@ -12,14 +12,12 @@ class Home extends React.Component {
 			items: [],
 			showEdit: false,
 			wordToEdit: '',
+			objectToEdit: '',
 		}
-
 		this.addItem = this.addItem.bind(this)
 	}
 
-	addItem(item) {
-		//fetch("/create-todo", { method: "POST", body:"name=" + encodeURIComponent(item), headers:{"content-type": 'application/x-www-form-urlencoded; charset=utf-8'}})
-		
+	addItem(item) {		
 		fetch('/create-todo', {
 		  method: 'POST',
 		  headers: {
@@ -51,20 +49,13 @@ class Home extends React.Component {
 				var i = this.state.items[j];
 			}
 		}
-		console.log("the ITEM is", item_id);
-		console.log("IN REMOVE ITEM", this.state.items);
 		if(i !== -1) {
-			console.log("in removeItem", this.state.items);
-			//this.state.items.splice(i, 1);
-			// fetch("/todos/:todo_id", { method: "DELETE", body:"name=" + encodeURIComponent(item_id), headers:{"content-type": 'application/x-www-form-urlencoded; charset=utf-8'}})
-			// .then(response => console.log(response))
-
-		fetch('/todos/' + item_id, {
-		  method: 'DELETE',
-		  headers: {
-		    'Content-Type': 'application/json'
-		  },
-		  body: JSON.stringify({
+			fetch('/todos/' + item_id, {
+		  		method: 'DELETE',
+		  		headers: {
+		    	'Content-Type': 'application/json'
+		  	},
+		  	body: JSON.stringify({
 		    id: item_id
 		  })
 		}).then((response) => {
@@ -72,35 +63,74 @@ class Home extends React.Component {
 		  }).then((data) => {
 		   	this.setState({ items: data })
 		  })
-	}
-
-
-		// return this.setState({ items: this.state.items })
-	}
-
-	editItemStart(item) {
-		var i = this.state.items.indexOf(item);
-		if(i !== -1) {
-			this.state.showEdit = true;
-			this.state.wordToEdit = item;
-			this.setState({ showEdit: true});
-			this.setState({wordToEdit: item});
 		}
 	}
 
-	editItem(item) {
-		var i = this.state.items.indexOf(this.state.wordToEdit);
+	editItemStart(item_id) {
+		var i;
+		for (var j = 0; j < this.state.items.length; j++) {
+			if (this.state.items[j]._id === item_id) {
+				i = this.state.items[j];
+			}
+		}
 		if (i !== -1) {
-			this.state.items[i] = item;
-			this.state.wordToEdit = '',
-			this.state.showEdit = false;
+			this.state.showEdit = true;
+			this.state.wordToEdit = i.name;
+			this.state.objectToEdit = i;
+			this.setState({ showEdit: true});
+			this.setState({wordToEdit: i.name});
+			this.setState({objectToEdit: i});
 		}
-		return this.setState({ items: this.state.items, wordToEdit: this.state.wordToEdit, showEdit: this.state.showEdit});
 	}
+
+	editItem(item_obj) {
+
+		console.log("item here", item_obj);
+		var i;
+		for (var j = 0; j < this.state.items.length; j++) {
+			if (this.state.items[j]._id === item_obj._id) {
+				i = this.state.items[j];
+				console.log("i is:", i);
+			}
+		}
+
+		//this.state.items[i].name = item_obj.name;
+		this.state.wordToEdit = '',
+		this.state.objectToEdit = '',
+		this.state.showEdit = false;
+		fetch('/edittodos/' + item_obj, {
+		  		method: 'PUT',
+		  		headers: {
+		    	'Content-Type': 'application/json'
+		  	},
+		  	body: JSON.stringify({
+		    id: item_obj._id
+		  })
+		}).then((response) => {
+		    return response.json()
+		  }).then((data) => {
+		  	console.log("data in editItem is", data)
+		  	var item_sub = [];
+		  	for (var a = 0; a < this.state.items.length; a++) {
+		  		if (this.state.items[a]._id !== data._id) {
+		  			item_sub.push(this.state.items[a]);
+		  		} else {
+		  			item_sub.push(data);
+		  		}
+		  	}
+		  	console.log("state items:", this.state.items);
+		  	console.log("item_sub", item_sub);
+		   	this.setState({ items: item_sub });
+
+		  })
+		//return this.setState({ items: this.state.items, wordToEdit: this.state.wordToEdit, objectToEdit: this.state.objectToEdit, showEdit: this.state.showEdit});
+	}
+
+
 
 	render() {
 		if(this.state.showEdit) {
-			return <div><EditItemForm wordToEdit={this.state.wordToEdit} editItem={this.editItem.bind(this)} /> </div>
+			return <div><EditItemForm objectToEdit={this.state.objectToEdit} editItem={this.editItem.bind(this)} /> </div>
 		} else {
 			return <div>
 				<h1>my to-do list</h1>

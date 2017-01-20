@@ -10,7 +10,7 @@ const ListItems = ({ items, removeItem, editItemStart }) => {
         return <li
                   key={index}>{item.name}
                   <button onClick={() => removeItem(item._id)}>remove</button>
-                  <button onClick={() => editItemStart(item.name)}>edit</button>
+                  <button onClick={() => editItemStart(item._id)}>edit</button>
               </li>;
       })}
     </ul>
